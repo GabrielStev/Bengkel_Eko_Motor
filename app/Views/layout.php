@@ -10,6 +10,7 @@ function documentStart(string $title): void
 {
     echo '<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
         . '<title>' . h($title) . ' • Bengkel Eko Motor</title>'
+        . '<link rel="icon" type="image/svg+xml" href="assets/icons/workshop.svg?v=1">'
         . '<link rel="stylesheet" href="assets/css/app.css"><script src="assets/js/app.js" defer></script></head><body>';
 }
 
