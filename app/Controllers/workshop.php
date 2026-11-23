@@ -71,9 +71,10 @@ function partInputs(array $values = [], string $mode = 'qty'): void
 {
     echo '<div class="scroll"><table><thead><tr><th>Sparepart</th><th>Stok</th><th>Harga jual</th><th>Jumlah</th>'
         . ($mode === 'purchase' ? '<th>Harga beli / unit</th>' : '') . '</tr></thead><tbody>';
-    foreach (rows('SELECT id_sparepart,nama_barang,stok,harga_jual FROM sparepart ORDER BY nama_barang') as $part) {
+    $where = $mode === 'purchase' ? " WHERE LOWER(TRIM(kategori)) <> 'jasa servis'" : '';
+    foreach (rows('SELECT id_sparepart,nama_barang,stok,harga_jual,kategori FROM sparepart' . $where . ' ORDER BY nama_barang') as $part) {
         $id = (int) $part['id_sparepart'];
-        echo '<tr><td>' . h($part['nama_barang']) . '</td><td>' . h($part['stok']) . '</td><td>' . h(rupiah($part['harga_jual']))
+        echo '<tr><td>' . h($part['nama_barang']) . '</td><td>' . h(isServiceItem($part['kategori']) ? '0 (Jasa)' : $part['stok']) . '</td><td>' . h(rupiah($part['harga_jual']))
             . '</td><td><input aria-label="' . h('Jumlah ' . $part['nama_barang']) . '" type="number" min="0" max="100000" data-unit="' . h($part['harga_jual']) . '" name="qty[' . $id . ']" value="' . h($values[$id] ?? '') . '"></td>';
         if ($mode === 'purchase') {
             echo '<td><input aria-label="' . h('Harga beli ' . $part['nama_barang']) . '" inputmode="decimal" name="harga[' . $id . ']"></td>';

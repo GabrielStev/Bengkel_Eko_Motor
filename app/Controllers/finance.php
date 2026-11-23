@@ -6,6 +6,7 @@ function showCheckout(array|false $order): void
     formStart('pay');
     hidden('token',bin2hex(random_bytes(16)));
     hidden('servis_id',$order['id'] ?? 0);
+    $total = 0;
     if ($order) {
         $parts = serviceParts((int) $order['id']);
         $total = cents($order['tarif']);
@@ -24,9 +25,15 @@ function showCheckout(array|false $order): void
         echo '<p class="estimate" aria-live="polite"></p>';
     }
     selectField('metode','Metode pembayaran',['Tunai'=>'Tunai','Transfer'=>'Transfer','QRIS'=>'QRIS'],'Tunai');
-    input('diterima','Uang diterima (untuk Tunai)','text','',false);
+    hidden('total_estimasi', $order ? $total : 0);
+    input('diterima','Nominal pembayaran diterima','text','',true);
+    echo '<p class="payment-feedback" role="status" aria-live="polite"></p>'
+        . '<p class="payment-help">Isi angka tanpa pemisah ribuan. Tunai boleh lebih dari total dan menghasilkan kembalian. Transfer/QRIS harus sama dengan total.</p>';
     echo '<label class="check"><input type="checkbox" name="konfirmasi" value="Ya" required> Pembayaran sudah diterima</label>';
     button('Simpan pembayaran');
+    echo '<dialog class="payment-dialog" aria-labelledby="payment-dialog-title" aria-describedby="payment-dialog-message">'
+        . '<h2 id="payment-dialog-title">Periksa pembayaran</h2>'
+        . '<p id="payment-dialog-message"></p><button type="button" data-close-payment>Perbaiki nominal</button></dialog>';
 }
 
 function showSales(array $user): void
@@ -143,7 +150,7 @@ function showPurchase(string $ref): void
 
 function lowStock(): array
 {
-    return rows('SELECT nama_barang,stok,stok_minimum FROM sparepart WHERE stok<=stok_minimum ORDER BY stok,nama_barang');
+    return rows('SELECT nama_barang,stok,stok_minimum FROM sparepart WHERE LOWER(TRIM(kategori))<>\'jasa servis\' AND stok<=stok_minimum ORDER BY stok,nama_barang');
 }
 
 function reportDate(string $key, string $default): string
@@ -193,7 +200,8 @@ function showDashboard(array $user): void
 {
     $role = $user['peran'];
     $actor = $user['id_pengguna'];
-    $belowTen = rows('SELECT nama_barang,stok FROM sparepart WHERE stok<10 ORDER BY stok,nama_barang');
+    $stockAlerts = rows('SELECT nama_barang,stok FROM sparepart WHERE LOWER(TRIM(kategori))<>\'jasa servis\' AND stok<=15 ORDER BY stok,nama_barang');
+    $lowCount = count(array_filter($stockAlerts, fn($part) => (int) $part['stok'] < 10));
     $cards = [];
     if ($role === 'Mekanik') {
         $counts = array_column(rows('SELECT status,COUNT(*) AS total FROM servis WHERE mekanik_id=? GROUP BY status',[$actor]),'total','status');
@@ -218,7 +226,7 @@ function showDashboard(array $user): void
             ['Antrean servis',$queue,'blue','servis'],
         ];
     }
-    $cards[] = ['Sparepart di bawah 10',count($belowTen),$belowTen ? 'red' : 'green','sparepart'];
+    $cards[] = ['Sparepart di bawah 10', $lowCount, $lowCount ? 'red' : 'green', 'sparepart'];
     echo '<div class="cards dashboard-cards">';
     foreach ($cards as [$label,$value,$tone,$page]) {
         echo '<a class="card tone-' . h($tone) . '" href="' . h(url($page)) . '"><small>' . h($label)
@@ -244,14 +252,15 @@ function showDashboard(array $user): void
         table(['Order','Motor','Jasa','Status','Diperbarui','Aksi'],$recent,fn($job)=>linkTo('Buka','pekerjaan',['id'=>$job['id']]));
     }
     echo '</section><section class="panel dashboard-stock"><div class="dashboard-heading"><h2>Peringatan stok</h2>'
-        . linkTo('Lihat stok','sparepart') . '</div><p>Sparepart dengan stok kurang dari 10 unit.</p>';
-    if (!$belowTen) {
-        echo '<p class="stock-clear">Semua sparepart memiliki minimal 10 unit.</p>';
+        . linkTo('Lihat stok','sparepart') . '</div>';
+    if (!$stockAlerts) {
+        echo '<p class="stock-clear">Semua sparepart memiliki lebih dari 15 unit.</p>';
     } else {
         echo '<ul class="stock-list">';
-        foreach ($belowTen as $part) {
-            echo '<li><span>' . h($part['nama_barang']) . '</span><strong class="stock-badge">'
-                . h($part['stok']) . ' unit</strong></li>';
+        foreach ($stockAlerts as $part) {
+            echo '<li><span>' . h($part['nama_barang']) . '</span>'
+                . '<span class="stock-alert-detail"><span class="stock-units">' . h($part['stok']) . ' unit</span>'
+                . stockBadge((int) $part['stok'], stockCondition((int) $part['stok'])) . '</span></li>';
         }
         echo '</ul>';
     }
@@ -267,7 +276,7 @@ function showMonthlyBestSellers(): void
         FROM penjualan p
         JOIN detail_penjualan d ON d.no_transaksi = p.no_transaksi
         JOIN sparepart s ON s.id_sparepart = d.id_sparepart
-        WHERE p.status = 'Lunas' AND p.tanggal_transaksi >= ? AND p.tanggal_transaksi < ?
+        WHERE LOWER(TRIM(s.kategori)) <> 'jasa servis' AND p.status = 'Lunas' AND p.tanggal_transaksi >= ? AND p.tanggal_transaksi < ?
         GROUP BY s.id_sparepart, s.nama_barang
         ORDER BY unit_terjual DESC, s.nama_barang, s.id_sparepart
         LIMIT 5", [$start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')]);

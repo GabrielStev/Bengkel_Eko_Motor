@@ -117,9 +117,12 @@ function dispatchAction(string $page, string $action, array $user): never
             $target = number('stok',0);
             $reason = field('alasan',500);
             atomic(function () use ($part,$target,$reason,$actor): void {
-                $record = row('SELECT stok FROM sparepart WHERE id_sparepart=? FOR UPDATE',[$part]);
+                $record = row('SELECT stok,kategori FROM sparepart WHERE id_sparepart=? FOR UPDATE',[$part]);
                 if (!$record) {
                     throw new DomainException('Sparepart tidak ditemukan.');
+                }
+                if (isServiceItem($record['kategori'])) {
+                    throw new DomainException('Jasa tidak memiliki persediaan barang.');
                 }
                 stock($part,$target-(int)$record['stok'],$actor,'Penyesuaian',null,$reason);
             });
@@ -134,7 +137,13 @@ function dispatchAction(string $page, string $action, array $user): never
             $id = updateService($user,$status);
             redirect('pekerjaan',['id'=>$id,'ok'=>1]);
         case 'pay':
-            redirect('nota',['ref'=>checkout($actor),'ok'=>1]);
+            $reference = checkout($actor);
+            if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode(['redirect' => url('nota', ['ref' => $reference, 'ok' => 1])], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+            redirect('nota',['ref'=>$reference,'ok'=>1]);
         case 'cancel':
             redirect('nota',['ref'=>cancelSale($actor),'ok'=>1]);
         case 'purchase':

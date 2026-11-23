@@ -109,7 +109,7 @@ function button(string $label): void
     echo '<button type="submit">' . h($label) . '</button></form>';
 }
 
-function table(array $headers, array $data, ?callable $action = null): void
+function table(array $headers, array $data, ?callable $action = null, array $formatters = []): void
 {
     echo '<div class="scroll"><table><thead><tr>';
     foreach ($headers as $header) {
@@ -121,8 +121,10 @@ function table(array $headers, array $data, ?callable $action = null): void
     }
     foreach ($data as $record) {
         echo '<tr>';
-        foreach ($record as $value) {
-            echo '<td>' . h($value ?? '—') . '</td>';
+        foreach ($record as $key => $value) {
+            // Only trusted view callbacks can return HTML. Other cells are escaped.
+            $cell = isset($formatters[$key]) ? $formatters[$key]($value, $record) : h($value ?? '—');
+            echo '<td>' . $cell . '</td>';
         }
         if ($action) {
             echo '<td>' . $action($record) . '</td>';
@@ -130,4 +132,26 @@ function table(array $headers, array $data, ?callable $action = null): void
         echo '</tr>';
     }
     echo '</tbody></table></div>';
+}
+
+
+function stockCondition(int $stock): string
+{
+    if ($stock < 10) {
+        return 'Stok rendah';
+    }
+    return $stock <= 15 ? 'Stok minimum' : 'Tersedia';
+}
+
+function stockBadge(int $stock, string $text, bool $boxed = true): string
+{
+    $tone = $stock < 10 ? 'danger' : ($stock <= 15 ? 'warning' : 'available');
+    $style = $boxed ? 'inventory-badge' : 'inventory-text';
+    return '<span class="' . $style . ' inventory-' . $tone . '">' . h($text) . '</span>';
+}
+
+
+function isServiceItem(string $category): bool
+{
+    return strtolower(trim($category)) === 'jasa servis';
 }

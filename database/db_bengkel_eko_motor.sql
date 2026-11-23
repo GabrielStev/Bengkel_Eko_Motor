@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 17, 2026 at 05:06 PM
+-- Generation Time: Nov 22, 2026 at 06:00 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -52,7 +52,9 @@ CREATE TABLE `detail_pembelian` (
 --
 
 INSERT INTO `detail_pembelian` (`no_pembelian`, `part_id`, `qty`, `harga`) VALUES
-('BEL-69BDD489FB5235E6', 9, 2, 150000.00);
+('BEL-69BDD489FB5235E6', 9, 2, 150000.00),
+('BEL-91A18249ABEEA4D2', 4, 2, 150000.00),
+('BEL-D61BBC04B41CE2E3', 5, 1, 30000.00);
 
 -- --------------------------------------------------------
 
@@ -82,7 +84,17 @@ INSERT INTO `detail_penjualan` (`id_detail`, `no_transaksi`, `id_sparepart`, `ju
 (5, 'TRX-0013', 7, 1, 30000.00, 30000.00, NULL),
 (6, 'TRX-DDF77E3F63DC7395', 2, 1, 35000.00, 35000.00, 'Kampas Rem Depan Beat'),
 (7, 'TRX-DDF77E3F63DC7395', 6, 1, 35000.00, 35000.00, 'Jasa Servis Ringan / Tune Up'),
-(8, 'TRX-DDF77E3F63DC7395', 7, 1, 15000.00, 15000.00, 'Jasa Ganti Oli & Filter');
+(8, 'TRX-DDF77E3F63DC7395', 7, 1, 15000.00, 15000.00, 'Jasa Ganti Oli & Filter'),
+(9, 'TRX-D2FD59B17BA7B596', 1, 1, 45000.00, 45000.00, 'Oli Mesin Federal Supreme'),
+(10, 'TRX-D2FD59B17BA7B596', 5, 1, 40000.00, 40000.00, 'Filter Udara Vario 125'),
+(11, 'TRX-D2FD59B17BA7B596', 10, 1, 30000.00, 30000.00, 'Kampas Rem Belakang'),
+(12, 'TRX-1AB4FCEB208B099C', 1, 1, 45000.00, 45000.00, 'Oli Mesin Federal Supreme'),
+(13, 'TRX-1AB4FCEB208B099C', 3, 1, 20000.00, 20000.00, 'Busi NGK Standard'),
+(14, 'TRX-1AB4FCEB208B099C', 6, 1, 35000.00, 35000.00, 'Jasa Servis Ringan / Tune Up'),
+(15, 'TRX-1AB4FCEB208B099C', 10, 1, 30000.00, 30000.00, 'Kampas Rem Belakang'),
+(16, 'TRX-E5FD6D657F088B04', 7, 1, 15000.00, 15000.00, 'Jasa Ganti Oli & Filter'),
+(17, 'TRX-46FD085C40EF27CD', 1, 1, 45000.00, 45000.00, 'Oli Mesin Federal Supreme'),
+(18, 'TRX-94E2BC9542E449E8', 3, 1, 20000.00, 20000.00, 'Busi NGK Standard');
 
 -- --------------------------------------------------------
 
@@ -122,7 +134,8 @@ CREATE TABLE `kendaraan` (
 --
 
 INSERT INTO `kendaraan` (`id`, `pelanggan_id`, `pelat`, `model`) VALUES
-(1, 1, 'AB 1234 AA', 'Mio');
+(1, 1, 'AB 1234 AA', 'Mio'),
+(2, 2, 'AA 4949 BM', 'Scoopy');
 
 -- --------------------------------------------------------
 
@@ -149,7 +162,21 @@ INSERT INTO `mutasi_stok` (`id`, `part_id`, `pengguna_id`, `jumlah`, `jenis`, `r
 (1, 9, 1, 2, 'Pembelian', 'BEL-69BDD489FB5235E6', NULL, '2026-11-17 21:44:34'),
 (2, 2, 2, -1, 'Penjualan', 'TRX-DDF77E3F63DC7395', NULL, '2026-11-17 21:46:23'),
 (3, 6, 2, -1, 'Penjualan', 'TRX-DDF77E3F63DC7395', NULL, '2026-11-17 21:46:23'),
-(4, 7, 2, -1, 'Penjualan', 'TRX-DDF77E3F63DC7395', NULL, '2026-11-17 21:46:23');
+(4, 7, 2, -1, 'Penjualan', 'TRX-DDF77E3F63DC7395', NULL, '2026-11-17 21:46:23'),
+(5, 1, 2, -1, 'Penjualan', 'TRX-D2FD59B17BA7B596', NULL, '2026-11-18 12:07:30'),
+(6, 5, 2, -1, 'Penjualan', 'TRX-D2FD59B17BA7B596', NULL, '2026-11-18 12:07:30'),
+(7, 10, 2, -1, 'Penjualan', 'TRX-D2FD59B17BA7B596', NULL, '2026-11-18 12:07:30'),
+(8, 9, 1, 4, 'Penyesuaian', NULL, 'tambah pembelian', '2026-11-19 13:47:45'),
+(9, 5, 1, 1, 'Pembelian', 'BEL-D61BBC04B41CE2E3', NULL, '2026-11-19 13:48:16'),
+(10, 4, 1, 2, 'Pembelian', 'BEL-91A18249ABEEA4D2', NULL, '2026-11-19 16:55:38'),
+(11, 9, 1, -3, 'Penyesuaian', NULL, 'contoh', '2026-11-19 16:58:02'),
+(12, 1, 2, -1, 'Penjualan', 'TRX-1AB4FCEB208B099C', NULL, '2026-11-19 17:04:15'),
+(13, 3, 2, -1, 'Penjualan', 'TRX-1AB4FCEB208B099C', NULL, '2026-11-19 17:04:15'),
+(14, 6, 2, -1, 'Penjualan', 'TRX-1AB4FCEB208B099C', NULL, '2026-11-19 17:04:15'),
+(15, 10, 2, -1, 'Penjualan', 'TRX-1AB4FCEB208B099C', NULL, '2026-11-19 17:04:15'),
+(16, 7, 2, -1, 'Penjualan', 'TRX-E5FD6D657F088B04', NULL, '2026-11-22 23:25:29'),
+(17, 1, 2, -1, 'Penjualan', 'TRX-46FD085C40EF27CD', NULL, '2026-11-22 23:50:38'),
+(18, 3, 2, -1, 'Penjualan', 'TRX-94E2BC9542E449E8', NULL, '2026-11-22 23:51:02');
 
 -- --------------------------------------------------------
 
@@ -168,7 +195,8 @@ CREATE TABLE `pelanggan` (
 --
 
 INSERT INTO `pelanggan` (`id`, `nama`, `telepon`) VALUES
-(1, 'Asep', '08123456789');
+(1, 'Asep', '08123456789'),
+(2, 'Joko', '08999999999');
 
 -- --------------------------------------------------------
 
@@ -217,7 +245,9 @@ CREATE TABLE `pembelian` (
 --
 
 INSERT INTO `pembelian` (`no_pembelian`, `tanggal_pembelian`, `id_pemasok`, `id_pengguna`, `total_pembelian`, `status_bayar`, `token`, `lunas_pada`, `lunas_oleh`) VALUES
-('BEL-69BDD489FB5235E6', '2026-11-17 21:44:34', 2, 1, 300000.00, 'Lunas', '36b24bf030f70f7738c9e41ebb179fca', '2026-11-17 21:44:34', 1);
+('BEL-69BDD489FB5235E6', '2026-11-17 21:44:34', 2, 1, 300000.00, 'Lunas', '36b24bf030f70f7738c9e41ebb179fca', '2026-11-17 21:44:34', 1),
+('BEL-91A18249ABEEA4D2', '2026-11-19 16:55:38', 4, 1, 300000.00, 'Lunas', 'c8f0ac10f0a5749ee373b0cde8ba28d5', '2026-11-19 16:55:38', 1),
+('BEL-D61BBC04B41CE2E3', '2026-11-19 13:48:16', 2, 1, 30000.00, 'Lunas', '545172cbc5d2ed1e5397cdf27a2fbd02', '2026-11-19 13:48:16', 1);
 
 -- --------------------------------------------------------
 
@@ -274,7 +304,12 @@ INSERT INTO `penjualan` (`no_transaksi`, `tanggal_transaksi`, `id_pengguna`, `to
 ('TRX-0011', '2026-11-02 09:30:00', 2, 80000.00, 'Tunai', NULL, NULL, NULL, NULL, 'Lunas', NULL, NULL, NULL, NULL),
 ('TRX-0012', '2026-11-02 11:15:00', 2, 195000.00, 'QRIS', NULL, NULL, NULL, NULL, 'Lunas', NULL, NULL, NULL, NULL),
 ('TRX-0013', '2026-11-03 13:00:00', 2, 50000.00, 'Tunai', NULL, NULL, NULL, NULL, 'Lunas', NULL, NULL, NULL, NULL),
-('TRX-DDF77E3F63DC7395', '2026-11-17 21:46:23', 2, 85000.00, 'QRIS', NULL, 1, NULL, '861d89d5d2abe244c65bc83554407aee', 'Lunas', 85000.00, NULL, NULL, NULL);
+('TRX-1AB4FCEB208B099C', '2026-11-19 17:04:15', 2, 130000.00, 'Transfer', NULL, 2, NULL, '03d7a418166fde16d7cc99be96e796a7', 'Lunas', 130000.00, NULL, NULL, NULL),
+('TRX-46FD085C40EF27CD', '2026-11-22 23:50:38', 2, 45000.00, 'Transfer', NULL, NULL, NULL, '906f6e2b2451b6f285a394aafcfca473', 'Lunas', 45000.00, NULL, NULL, NULL),
+('TRX-94E2BC9542E449E8', '2026-11-22 23:51:02', 2, 20000.00, 'Tunai', NULL, NULL, NULL, '3ad764620f0aad3ce88414ac04495fa9', 'Lunas', 50000.00, NULL, NULL, NULL),
+('TRX-D2FD59B17BA7B596', '2026-11-18 12:07:30', 2, 115000.00, 'Tunai', NULL, 1, NULL, '54c856d4e34fb359ebb2ed8fa8f39d43', 'Lunas', 115000.00, NULL, NULL, NULL),
+('TRX-DDF77E3F63DC7395', '2026-11-17 21:46:23', 2, 85000.00, 'QRIS', NULL, 1, NULL, '861d89d5d2abe244c65bc83554407aee', 'Lunas', 85000.00, NULL, NULL, NULL),
+('TRX-E5FD6D657F088B04', '2026-11-22 23:25:29', 2, 15000.00, 'Tunai', NULL, NULL, NULL, '2075a924e70b299d91b7b9d51a83ff63', 'Lunas', 20000.00, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -311,7 +346,8 @@ CREATE TABLE `servis` (
 --
 
 INSERT INTO `servis` (`id`, `kendaraan_id`, `mekanik_id`, `jasa_id`, `keluhan`, `catatan`, `dibuat`, `diperbarui`, `status`) VALUES
-(1, 1, 3, 1, 'Shock Keras', '', '2026-11-17 21:40:50', '2026-11-17 21:49:35', 'Dikerjakan');
+(1, 1, 3, 1, 'Shock Keras', '', '2026-11-17 21:40:50', '2026-11-17 21:49:35', 'Dikerjakan'),
+(2, 2, 3, 1, 'Gasnya Berat', 'selesai', '2026-11-19 17:06:45', '2026-11-22 21:47:02', 'Selesai');
 
 -- --------------------------------------------------------
 
@@ -354,16 +390,16 @@ CREATE TABLE `sparepart` (
 --
 
 INSERT INTO `sparepart` (`id_sparepart`, `nama_barang`, `kategori`, `harga_jual`, `stok`, `stok_minimum`) VALUES
-(1, 'Oli Mesin Federal Supreme', 'Sparepart', 45000.00, 25, 5),
-(2, 'Kampas Rem Depan Beat', 'Sparepart', 35000.00, 14, 3),
-(3, 'Busi NGK Standard', 'Sparepart', 20000.00, 30, 5),
-(4, 'Ban Luar IRC 80/90-14', 'Sparepart', 160000.00, 8, 2),
-(5, 'Filter Udara Vario 125', 'Sparepart', 40000.00, 10, 3),
-(6, 'Jasa Servis Ringan / Tune Up', 'Jasa Servis', 35000.00, 998, 0),
-(7, 'Jasa Ganti Oli & Filter', 'Jasa Servis', 15000.00, 998, 0),
-(8, 'Bohlam Lampu Depan LED', 'Sparepart', 45000.00, 12, 3),
-(9, 'Aki Kering GTZ5S', 'Sparepart', 195000.00, 8, 2),
-(10, 'Kampas Rem Belakang', 'Sparepart', 30000.00, 14, 10);
+(1, 'Oli Mesin Federal Supreme', 'Sparepart', 45000.00, 22, 10),
+(2, 'Kampas Rem Depan Beat', 'Sparepart', 35000.00, 14, 10),
+(3, 'Busi NGK Standard', 'Sparepart', 20000.00, 28, 10),
+(4, 'Ban Luar IRC 80/90-14', 'Sparepart', 160000.00, 10, 10),
+(5, 'Filter Udara Vario 125', 'Sparepart', 40000.00, 10, 10),
+(6, 'Jasa Servis Ringan / Tune Up', 'Jasa Servis', 35000.00, 0, 0),
+(7, 'Jasa Ganti Oli & Filter', 'Jasa Servis', 15000.00, 0, 0),
+(8, 'Bohlam Lampu Depan LED', 'Sparepart', 45000.00, 12, 10),
+(9, 'Aki Kering GTZ5S', 'Sparepart', 195000.00, 9, 10),
+(10, 'Kampas Rem Belakang', 'Sparepart', 30000.00, 12, 10);
 
 --
 -- Indexes for dumped tables
@@ -491,7 +527,7 @@ ALTER TABLE `sparepart`
 -- AUTO_INCREMENT for table `detail_penjualan`
 --
 ALTER TABLE `detail_penjualan`
-  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `jasa`
@@ -503,19 +539,19 @@ ALTER TABLE `jasa`
 -- AUTO_INCREMENT for table `kendaraan`
 --
 ALTER TABLE `kendaraan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `mutasi_stok`
 --
 ALTER TABLE `mutasi_stok`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `pelanggan`
 --
 ALTER TABLE `pelanggan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pemasok`
@@ -533,7 +569,7 @@ ALTER TABLE `pengguna`
 -- AUTO_INCREMENT for table `servis`
 --
 ALTER TABLE `servis`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `sparepart`

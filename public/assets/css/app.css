@@ -181,3 +181,41 @@ nav a[aria-current] { box-shadow: inset 3px 0 #ff7a1a; color: #ffd7b8; }
     .login-features { display: none; }
     .login-description { margin-bottom: 0; }
 }
+
+
+.inventory-badge { display: inline-block; padding: 5px 9px; border-radius: 7px; font-size: .88rem; font-weight: 750; }
+.inventory-danger { background: #ffe5e7; color: #a21d30; }
+.inventory-warning { background: #fff0d5; color: #934900; }
+.inventory-available { background: #e2f5e7; color: #176535; }
+.stock-list .inventory-badge { text-align: right; }
+.payment-feedback { font-weight: 700; max-width: 650px; }
+.payment-feedback:empty { display: none; }
+.payment-help { color: #52637d; max-width: 650px; font-size: .9rem; }
+
+
+.stock-alert-detail { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 7px; flex: none; }
+.stock-alert-detail .inventory-badge { padding: 6px 10px; border-radius: 6px; white-space: nowrap; }
+.stock-units { color: #52637d; white-space: nowrap; font-size: .88rem; }
+.stock-alert-detail .inventory-danger { background: #c42c3c; color: #fff; }
+.stock-alert-detail .inventory-warning { background: #f59b36; color: #392000; }
+.payment-dialog { width: min(440px, calc(100% - 32px)); border: 0; border-top: 5px solid #dc3545; border-radius: 13px; padding: 25px; color: #17283e; box-shadow: 0 18px 70px #0005; }
+.payment-dialog::backdrop { background: #111b2b99; }
+.payment-dialog h2 { margin-top: 0; }
+.payment-dialog p { line-height: 1.6; }
+button:disabled { opacity: .65; cursor: wait; }
+@media (max-width: 600px) {
+    .stock-list li { flex-wrap: wrap; }
+}
+
+
+/* Dashboard conditions use solid labels; inventory table uses colored text. */
+.stock-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.stock-list li > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.stock-alert-detail { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.stock-alert-detail .inventory-badge { display: inline-block; min-width: 116px; text-align: center; padding: 8px 12px; font-weight: 750; cursor: default; }
+.inventory-text { background: transparent; font-weight: 750; white-space: nowrap; }
+.inventory-text.inventory-danger { color: #b42336; }
+.inventory-text.inventory-warning { color: #a34b00; }
+.inventory-text.inventory-available { color: #16703b; }
+
+.service-label { color: #52637d; font-weight: 700; }

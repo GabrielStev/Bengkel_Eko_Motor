@@ -35,6 +35,11 @@ try {
         error_log('Bengkel Eko Motor: ' . get_class($error) . ' (' . $error->getCode() . ')');
         $message = 'Sistem tidak dapat memproses permintaan. Periksa konfigurasi dan koneksi database sesuai README.';
     }
+    if (str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['message' => $message], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
     if ($user) {
         layout('Permintaan tidak berhasil',$user,'','<p role="alert" class="error">' . h($message) . '</p><p>' . linkTo('Kembali ke dashboard','dashboard') . '</p>');
     } else {

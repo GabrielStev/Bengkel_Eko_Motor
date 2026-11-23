@@ -8,10 +8,13 @@ function workshopBrand(): string
 
 function documentStart(string $title): void
 {
+    $assetRoot = dirname(__DIR__, 2) . '/public/assets/';
+    $cssVersion = filemtime($assetRoot . 'css/app.css');
+    $jsVersion = filemtime($assetRoot . 'js/app.js');
     echo '<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
         . '<title>' . h($title) . ' • Bengkel Eko Motor</title>'
         . '<link rel="icon" type="image/svg+xml" href="assets/icons/workshop.svg?v=1">'
-        . '<link rel="stylesheet" href="assets/css/app.css"><script src="assets/js/app.js" defer></script></head><body>';
+        . '<link rel="stylesheet" href="assets/css/app.css?v=' . h($cssVersion) . '"><script src="assets/js/app.js?v=' . h($jsVersion) . '" defer></script></head><body>';
 }
 
 function loginPage(?string $message): void

@@ -32,6 +32,10 @@ function saveMaster(string $page, int $actor): void
             default => field($key),
         };
     }
+    if ($page === 'sparepart' && isServiceItem($values['kategori'])) {
+        $values['stok'] = 0;
+        $values['stok_minimum'] = 0;
+    }
     if ($page === 'jasa' && cents($values['tarif']) === 0) {
         throw new DomainException('Tarif harus lebih dari nol.');
     }
@@ -93,15 +97,24 @@ function showMaster(string $page, bool $editable): void
         $headers[] = 'Stok';
         $headers[] = 'Kondisi';
         foreach ($data as &$record) {
-            $record['kondisi'] = (int) $record['stok'] < 10 ? 'Stok rendah' :
-                ($record['stok'] <= $record['stok_minimum'] ? 'Stok minimum' : 'Tersedia');
+            if (isServiceItem($record['kategori'])) {
+                $record['stok'] = 0;
+                $record['stok_minimum'] = 0;
+                $record['kondisi'] = 'Jasa';
+            } else {
+                $record['kondisi'] = stockCondition((int) $record['stok']);
+            }
         }
         unset($record);
     }
     if ($editable) {
         $headers[] = 'Aksi';
     }
-    table($headers,$data,$editable ? fn($r) => linkTo('Edit',$page,['edit'=>$r[$pk]]) : null);
+    $formatters = $page === 'sparepart' ? [
+        'stok' => fn($value, $record) => isServiceItem($record['kategori']) ? '0' : stockBadge((int) $value, (string) $value, false),
+        'kondisi' => fn($value, $record) => isServiceItem($record['kategori']) ? '<span class="service-label">Jasa</span>' : stockBadge((int) $record['stok'], (string) $value, false),
+    ] : [];
+    table($headers,$data,$editable ? fn($r) => linkTo('Edit',$page,['edit'=>$r[$pk]]) : null, $formatters);
     if (!$editable) {
         return;
     }
@@ -130,7 +143,7 @@ function showMaster(string $page, bool $editable): void
     if ($page === 'sparepart') {
         echo '<section class="panel"><h2>Penyesuaian stok</h2>';
         formStart('adjust');
-        selectField('part_id','Sparepart',options('SELECT id_sparepart,nama_barang FROM sparepart ORDER BY nama_barang'));
+        selectField('part_id', 'Sparepart', options("SELECT id_sparepart,nama_barang FROM sparepart WHERE LOWER(TRIM(kategori)) <> 'jasa servis' ORDER BY nama_barang"));
         input('stok','Stok aktual','number');
         input('alasan','Alasan penyesuaian');
         button('Simpan penyesuaian');

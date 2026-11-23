@@ -36,6 +36,10 @@ function stock(int $part, int $delta, int $actor, string $kind, ?string $ref, ?s
     if ($delta === 0) {
         return;
     }
+    $item = row('SELECT kategori FROM sparepart WHERE id_sparepart=? FOR UPDATE', [$part]);
+    if ($item && isServiceItem($item['kategori'])) {
+        return;
+    }
     $changed = query('UPDATE sparepart SET stok=stok+? WHERE id_sparepart=? AND stok+?>=0', [$delta,$part,$delta]);
     if ($changed->rowCount() !== 1) {
         throw new DomainException('Stok tidak cukup atau sparepart tidak tersedia.');
@@ -94,8 +98,8 @@ function checkout(int $actor): string
             $total = $jasa ? cents($jasa['tarif']) : 0;
             $lines = [];
             foreach ($quantities as $part => $qty) {
-                $record = row('SELECT nama_barang,harga_jual,stok FROM sparepart WHERE id_sparepart=? FOR UPDATE', [$part]);
-                if (!$record || $record['stok'] < $qty) {
+                $record = row('SELECT nama_barang,harga_jual,stok,kategori FROM sparepart WHERE id_sparepart=? FOR UPDATE', [$part]);
+                if (!$record || (!isServiceItem($record['kategori']) && $record['stok'] < $qty)) {
                     throw new DomainException('Stok tidak cukup untuk ' . ($record['nama_barang'] ?? 'sparepart tersebut') . '.');
                 }
                 $subtotal = cents($record['harga_jual']) * $qty;
@@ -106,9 +110,18 @@ function checkout(int $actor): string
             if ($total <= 0) {
                 throw new DomainException('Pilih item dan pastikan total lebih dari nol.');
             }
-            $received = $method === 'Tunai' ? cents(field('diterima', 13)) : $total;
+            $amount = field('diterima', 13, false);
+            if ($amount === '') {
+                throw new DomainException('Isi nominal pembayaran yang diterima.');
+            }
+            $received = cents($amount);
             if ($received < $total) {
-                throw new DomainException('Uang tunai yang diterima kurang.');
+                throw new DomainException('Nominal kurang ' . rupiah(decimal($total - $received))
+                    . '. Total tagihan ' . rupiah(decimal($total)) . '.');
+            }
+            if ($method !== 'Tunai' && $received !== $total) {
+                throw new DomainException('Nominal Transfer/QRIS harus sama dengan total tagihan '
+                    . rupiah(decimal($total)) . '.');
             }
             $ref = 'TRX-' . strtoupper(bin2hex(random_bytes(8)));
             query('INSERT INTO penjualan(no_transaksi,tanggal_transaksi,id_pengguna,total_bayar,metode_bayar,servis_id,pelanggan_id,kendaraan_id,token,diterima) VALUES (?,NOW(),?,?,?,?,?,?,?,?)',
@@ -149,6 +162,10 @@ function purchase(int $actor): string
             $total = 0;
             $lines = [];
             foreach ($quantities as $part => $qty) {
+                $item = row('SELECT kategori FROM sparepart WHERE id_sparepart=? FOR UPDATE', [$part]);
+                if (!$item || isServiceItem($item['kategori'])) {
+                    throw new DomainException('Pembelian stok hanya untuk barang fisik.');
+                }
                 $price = $_POST['harga'][$part] ?? '';
                 $unit = cents(is_string($price) ? $price : '');
                 if (!$unit) {
