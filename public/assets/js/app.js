@@ -128,3 +128,54 @@ if (demoAccounts && loginUsername && loginPassword) {
     demoAccounts.hidden = false;
     updateSelected();
 }
+
+
+const supplierPicker = document.querySelector('[data-supplier-picker]');
+if (supplierPicker) {
+    supplierPicker.querySelector('select[name="pemasok"]').addEventListener('change', () => supplierPicker.requestSubmit());
+}
+
+const catalogAll = document.querySelector('[data-catalog-all]');
+if (catalogAll) {
+    const form = catalogAll.form;
+    const items = Array.from(form.querySelectorAll('[data-catalog-item]'));
+    const updateCatalog = () => {
+        let count = 0;
+        items.forEach(item => {
+            if (item.checked) count++;
+            const price = item.closest('tr').querySelector('input[name^="harga["]');
+            price.required = item.checked;
+        });
+        catalogAll.checked = items.length > 0 && count === items.length;
+        catalogAll.indeterminate = count > 0 && count < items.length;
+    };
+    catalogAll.addEventListener('change', () => {
+        items.forEach(item => { item.checked = catalogAll.checked; });
+        updateCatalog();
+    });
+    items.forEach(item => item.addEventListener('change', updateCatalog));
+    updateCatalog();
+}
+
+
+const purchaseTotal = document.querySelector('[data-purchase-total]');
+if (purchaseTotal) {
+    const form = purchaseTotal.closest('form');
+    const quantities = form.querySelectorAll('input[name^="qty["]');
+    const currency = new Intl.NumberFormat('id-ID', {style: 'currency', currency: 'IDR'});
+    const updatePurchaseTotal = () => {
+        let total = 0;
+        quantities.forEach(input => {
+            const quantity = Number(input.value);
+            const price = input.closest('tr').querySelector('input[name^="harga["]');
+            if (Number.isInteger(quantity) && quantity > 0 && price) {
+                total += quantity * Math.round(Number(price.value) * 100);
+            }
+        });
+        purchaseTotal.textContent = currency.format(total / 100);
+    };
+    form.addEventListener('input', updatePurchaseTotal);
+    form.addEventListener('change', updatePurchaseTotal);
+    form.addEventListener('reset', () => setTimeout(updatePurchaseTotal, 0));
+    updatePurchaseTotal();
+}

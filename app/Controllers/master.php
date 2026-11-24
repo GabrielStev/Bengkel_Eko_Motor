@@ -114,7 +114,13 @@ function showMaster(string $page, bool $editable): void
         'stok' => fn($value, $record) => isServiceItem($record['kategori']) ? '0' : stockBadge((int) $value, (string) $value, false),
         'kondisi' => fn($value, $record) => isServiceItem($record['kategori']) ? '<span class="service-label">Jasa</span>' : stockBadge((int) $record['stok'], (string) $value, false),
     ] : [];
-    table($headers,$data,$editable ? fn($r) => linkTo('Edit',$page,['edit'=>$r[$pk]]) : null, $formatters);
+    if ($page === 'sparepart') {
+        echo '<div class="inventory-scroll" role="region" aria-label="Daftar sparepart, gulir untuk melihat barang lainnya" tabindex="0">';
+    }
+    table($headers,$data,$editable ? fn($r) => linkTo('Edit',$page,['edit'=>$r[$pk]]) . ($page === 'pemasok' ? ' &nbsp; ' . linkTo('Katalog & harga','katalog-pemasok',['id'=>$r[$pk]]) : '') : null, $formatters);
+    if ($page === 'sparepart') {
+        echo '</div>';
+    }
     if (!$editable) {
         return;
     }

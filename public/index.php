@@ -8,7 +8,7 @@ class AccessDenied extends RuntimeException {}
 $root = dirname(__DIR__);
 foreach (['app/Models/database.php','app/Views/helpers.php','app/Views/layout.php','app/Middleware/security.php',
     'app/Services/transactions.php','app/Controllers/master.php','app/Controllers/workshop.php',
-    'app/Controllers/finance.php','routes/web.php'] as $module) {
+    'app/Controllers/finance.php','app/Controllers/suppliers.php','routes/web.php'] as $module) {
     require $root . '/' . $module;
 }
 

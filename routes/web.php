@@ -48,6 +48,7 @@ function route(array|false $user): void
         'sparepart'=>['Sparepart',$all,['save'=>$owner,'adjust'=>$owner]],
         'jasa'=>['Katalog jasa',$owner,['save'=>$owner]],
         'pemasok'=>['Pemasok',$owner,['save'=>$owner]],
+        'katalog-pemasok'=>['Katalog pemasok',$owner,['save-catalog'=>$owner]],
         'pengguna'=>['Pengguna',$owner,['save'=>$owner]],
         'servis'=>['Order servis',$all,['create'=>$staff]],
         'pekerjaan'=>['Detail pekerjaan',$all,['start'=>['Pemilik','Mekanik'],'progress'=>['Pemilik','Mekanik'],'assign'=>$owner]],
@@ -85,6 +86,7 @@ function route(array|false $user): void
         'penjualan'=>showSales($user),
         'nota'=>showReceipt($reference,$user),
         'pembelian'=>showPurchases(),
+        'katalog-pemasok'=>showSupplierCatalog($id),
         'detail-beli'=>showPurchase($reference),
         'laporan'=>showReports(),
         default=>showMaster($page,$page !== 'sparepart' || $user['peran'] === 'Pemilik'),
@@ -109,6 +111,8 @@ function dispatchAction(string $page, string $action, array $user): never
 {
     $actor = (int) $user['id_pengguna'];
     switch ($action) {
+        case 'save-catalog':
+            redirect('katalog-pemasok', ['id' => saveSupplierCatalog(), 'ok' => 1]);
         case 'save':
             saveMaster($page,$actor);
             break;

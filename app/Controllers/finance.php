@@ -118,12 +118,34 @@ function showPurchases(): void
             FROM pembelian b JOIN pemasok p ON p.id_pemasok=b.id_pemasok JOIN pengguna u ON u.id_pengguna=b.id_pengguna ORDER BY b.tanggal_pembelian DESC')),
         fn($r)=>linkTo('Rincian','detail-beli',['ref'=>$r['no_pembelian']]));
     echo '<section class="panel"><h2>Catat barang diterima</h2>';
-    formStart('purchase');
-    hidden('token',bin2hex(random_bytes(16)));
-    selectField('pemasok_id','Pemasok',options('SELECT id_pemasok,nama_pemasok FROM pemasok ORDER BY nama_pemasok'));
-    selectField('status_bayar','Status pembayaran',['Lunas'=>'Lunas','Utang'=>'Utang']);
-    partInputs([], 'purchase');
-    button('Simpan pembelian');
+    $id = filter_var($_GET['pemasok'] ?? '0', FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+    if ($id === false) {
+        throw new DomainException('Pilihan pemasok tidak valid.');
+    }
+    $supplier = $id ? supplierRecord($id) : false;
+    echo '<form method="get" data-supplier-picker>';
+    hidden('page', 'pembelian');
+    selectField('pemasok', 'Pilih pemasok', options('SELECT id_pemasok,nama_pemasok FROM pemasok ORDER BY nama_pemasok'), $id);
+    echo '</form>';
+    if (!$supplier) {
+        echo '<p>Pilih pemasok untuk menampilkan barang yang tersedia beserta jumlah dan harga belinya.</p>';
+        purchaseCatalogTable(rows("SELECT id_sparepart,nama_barang,stok,harga_jual FROM sparepart WHERE LOWER(TRIM(kategori))<>'jasa servis' ORDER BY nama_barang"), false);
+    } else {
+        $parts = supplierCatalog($id);
+        echo '<h3>' . h($supplier['nama_pemasok']) . '</h3>';
+        if (!$parts) {
+            purchaseCatalogTable([], true);
+            echo '<p>' . linkTo('Isi katalog dan harga pemasok', 'katalog-pemasok', ['id' => $id]) . '</p>';
+        } else {
+            formStart('purchase');
+            hidden('token', bin2hex(random_bytes(16)));
+            hidden('pemasok_id', $id);
+            selectField('status_bayar', 'Status pembayaran', ['Lunas' => 'Lunas', 'Utang' => 'Utang']);
+            purchaseCatalogTable($parts, true);
+            echo '<p class="purchase-total" aria-live="polite"><strong>Total pembelian: <output data-purchase-total>Rp0,00</output></strong></p>';
+            button('Simpan pembelian');
+        }
+    }
     echo '</section>';
 }
 

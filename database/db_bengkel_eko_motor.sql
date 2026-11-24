@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 22, 2026 at 06:00 PM
+-- Generation Time: Nov 24, 2026 at 04:09 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -94,7 +94,8 @@ INSERT INTO `detail_penjualan` (`id_detail`, `no_transaksi`, `id_sparepart`, `ju
 (15, 'TRX-1AB4FCEB208B099C', 10, 1, 30000.00, 30000.00, 'Kampas Rem Belakang'),
 (16, 'TRX-E5FD6D657F088B04', 7, 1, 15000.00, 15000.00, 'Jasa Ganti Oli & Filter'),
 (17, 'TRX-46FD085C40EF27CD', 1, 1, 45000.00, 45000.00, 'Oli Mesin Federal Supreme'),
-(18, 'TRX-94E2BC9542E449E8', 3, 1, 20000.00, 20000.00, 'Busi NGK Standard');
+(18, 'TRX-94E2BC9542E449E8', 3, 1, 20000.00, 20000.00, 'Busi NGK Standard'),
+(19, 'TRX-3E5CC0D5EF5038DC', 1, 1, 45000.00, 45000.00, 'Oli Mesin Federal Supreme');
 
 -- --------------------------------------------------------
 
@@ -176,7 +177,8 @@ INSERT INTO `mutasi_stok` (`id`, `part_id`, `pengguna_id`, `jumlah`, `jenis`, `r
 (15, 10, 2, -1, 'Penjualan', 'TRX-1AB4FCEB208B099C', NULL, '2026-11-19 17:04:15'),
 (16, 7, 2, -1, 'Penjualan', 'TRX-E5FD6D657F088B04', NULL, '2026-11-22 23:25:29'),
 (17, 1, 2, -1, 'Penjualan', 'TRX-46FD085C40EF27CD', NULL, '2026-11-22 23:50:38'),
-(18, 3, 2, -1, 'Penjualan', 'TRX-94E2BC9542E449E8', NULL, '2026-11-22 23:51:02');
+(18, 3, 2, -1, 'Penjualan', 'TRX-94E2BC9542E449E8', NULL, '2026-11-22 23:51:02'),
+(19, 1, 2, -1, 'Penjualan', 'TRX-3E5CC0D5EF5038DC', NULL, '2026-11-24 21:00:12');
 
 -- --------------------------------------------------------
 
@@ -221,6 +223,19 @@ INSERT INTO `pemasok` (`id_pemasok`, `nama_pemasok`, `no_hp`, `alamat`) VALUES
 (3, 'Toko Sparepart Motor Barokah', '081556677889', 'Jl. Solo Km. 7, Depok, Sleman'),
 (4, 'Distributor Ban IRC Jogja', '081889900112', 'Jl. Hos Cokroaminoto No. 45, Yogyakarta'),
 (5, 'Mega Aki Sejahtera', '081990011223', 'Jl. Godean Km. 4, Yogyakarta');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pemasok_sparepart`
+--
+
+CREATE TABLE `pemasok_sparepart` (
+  `id_pemasok` int(11) NOT NULL,
+  `id_sparepart` int(11) NOT NULL,
+  `harga_beli` decimal(12,2) NOT NULL CHECK (`harga_beli` > 0),
+  `diperbarui` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -305,6 +320,7 @@ INSERT INTO `penjualan` (`no_transaksi`, `tanggal_transaksi`, `id_pengguna`, `to
 ('TRX-0012', '2026-11-02 11:15:00', 2, 195000.00, 'QRIS', NULL, NULL, NULL, NULL, 'Lunas', NULL, NULL, NULL, NULL),
 ('TRX-0013', '2026-11-03 13:00:00', 2, 50000.00, 'Tunai', NULL, NULL, NULL, NULL, 'Lunas', NULL, NULL, NULL, NULL),
 ('TRX-1AB4FCEB208B099C', '2026-11-19 17:04:15', 2, 130000.00, 'Transfer', NULL, 2, NULL, '03d7a418166fde16d7cc99be96e796a7', 'Lunas', 130000.00, NULL, NULL, NULL),
+('TRX-3E5CC0D5EF5038DC', '2026-11-24 21:00:12', 2, 45000.00, 'Tunai', NULL, 1, NULL, 'a04381978ebcb9e7782b13b54a94d234', 'Lunas', 45000.00, NULL, NULL, NULL),
 ('TRX-46FD085C40EF27CD', '2026-11-22 23:50:38', 2, 45000.00, 'Transfer', NULL, NULL, NULL, '906f6e2b2451b6f285a394aafcfca473', 'Lunas', 45000.00, NULL, NULL, NULL),
 ('TRX-94E2BC9542E449E8', '2026-11-22 23:51:02', 2, 20000.00, 'Tunai', NULL, NULL, NULL, '3ad764620f0aad3ce88414ac04495fa9', 'Lunas', 50000.00, NULL, NULL, NULL),
 ('TRX-D2FD59B17BA7B596', '2026-11-18 12:07:30', 2, 115000.00, 'Tunai', NULL, 1, NULL, '54c856d4e34fb359ebb2ed8fa8f39d43', 'Lunas', 115000.00, NULL, NULL, NULL),
@@ -346,7 +362,7 @@ CREATE TABLE `servis` (
 --
 
 INSERT INTO `servis` (`id`, `kendaraan_id`, `mekanik_id`, `jasa_id`, `keluhan`, `catatan`, `dibuat`, `diperbarui`, `status`) VALUES
-(1, 1, 3, 1, 'Shock Keras', '', '2026-11-17 21:40:50', '2026-11-17 21:49:35', 'Dikerjakan'),
+(1, 1, 3, 1, 'Shock Keras', 'selesai tidak ada tambahan spareart', '2026-11-17 21:40:50', '2026-11-24 20:59:10', 'Selesai'),
 (2, 2, 3, 1, 'Gasnya Berat', 'selesai', '2026-11-19 17:06:45', '2026-11-22 21:47:02', 'Selesai');
 
 -- --------------------------------------------------------
@@ -390,7 +406,7 @@ CREATE TABLE `sparepart` (
 --
 
 INSERT INTO `sparepart` (`id_sparepart`, `nama_barang`, `kategori`, `harga_jual`, `stok`, `stok_minimum`) VALUES
-(1, 'Oli Mesin Federal Supreme', 'Sparepart', 45000.00, 22, 10),
+(1, 'Oli Mesin Federal Supreme', 'Sparepart', 45000.00, 21, 10),
 (2, 'Kampas Rem Depan Beat', 'Sparepart', 35000.00, 14, 10),
 (3, 'Busi NGK Standard', 'Sparepart', 20000.00, 28, 10),
 (4, 'Ban Luar IRC 80/90-14', 'Sparepart', 160000.00, 10, 10),
@@ -399,7 +415,8 @@ INSERT INTO `sparepart` (`id_sparepart`, `nama_barang`, `kategori`, `harga_jual`
 (7, 'Jasa Ganti Oli & Filter', 'Jasa Servis', 15000.00, 0, 0),
 (8, 'Bohlam Lampu Depan LED', 'Sparepart', 45000.00, 12, 10),
 (9, 'Aki Kering GTZ5S', 'Sparepart', 195000.00, 9, 10),
-(10, 'Kampas Rem Belakang', 'Sparepart', 30000.00, 12, 10);
+(10, 'Kampas Rem Belakang', 'Sparepart', 30000.00, 12, 10),
+(11, 'Ban Racing', 'Sparepart', 200000.00, 0, 0);
 
 --
 -- Indexes for dumped tables
@@ -459,6 +476,13 @@ ALTER TABLE `pelanggan`
 --
 ALTER TABLE `pemasok`
   ADD PRIMARY KEY (`id_pemasok`);
+
+--
+-- Indexes for table `pemasok_sparepart`
+--
+ALTER TABLE `pemasok_sparepart`
+  ADD PRIMARY KEY (`id_pemasok`,`id_sparepart`),
+  ADD KEY `fk_katalog_sparepart` (`id_sparepart`);
 
 --
 -- Indexes for table `pembelian`
@@ -527,7 +551,7 @@ ALTER TABLE `sparepart`
 -- AUTO_INCREMENT for table `detail_penjualan`
 --
 ALTER TABLE `detail_penjualan`
-  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `jasa`
@@ -545,7 +569,7 @@ ALTER TABLE `kendaraan`
 -- AUTO_INCREMENT for table `mutasi_stok`
 --
 ALTER TABLE `mutasi_stok`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `pelanggan`
@@ -575,7 +599,7 @@ ALTER TABLE `servis`
 -- AUTO_INCREMENT for table `sparepart`
 --
 ALTER TABLE `sparepart`
-  MODIFY `id_sparepart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_sparepart` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables
@@ -613,6 +637,13 @@ ALTER TABLE `kendaraan`
 ALTER TABLE `mutasi_stok`
   ADD CONSTRAINT `mutasi_stok_ibfk_1` FOREIGN KEY (`part_id`) REFERENCES `sparepart` (`id_sparepart`),
   ADD CONSTRAINT `mutasi_stok_ibfk_2` FOREIGN KEY (`pengguna_id`) REFERENCES `pengguna` (`id_pengguna`);
+
+--
+-- Constraints for table `pemasok_sparepart`
+--
+ALTER TABLE `pemasok_sparepart`
+  ADD CONSTRAINT `fk_katalog_pemasok` FOREIGN KEY (`id_pemasok`) REFERENCES `pemasok` (`id_pemasok`),
+  ADD CONSTRAINT `fk_katalog_sparepart` FOREIGN KEY (`id_sparepart`) REFERENCES `sparepart` (`id_sparepart`);
 
 --
 -- Constraints for table `pembelian`

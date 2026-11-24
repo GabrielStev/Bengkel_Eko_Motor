@@ -219,3 +219,42 @@ button:disabled { opacity: .65; cursor: wait; }
 .inventory-text.inventory-available { color: #16703b; }
 
 .service-label { color: #52637d; font-weight: 700; }
+
+
+/* One header and five inventory rows; further items remain accessible by scroll. */
+.inventory-scroll .scroll {
+    max-height: 306px;
+    overflow: auto;
+    scrollbar-gutter: stable;
+}
+.inventory-scroll table {
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 850px;
+}
+.inventory-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: 44px;
+    padding: 10px 12px;
+    background: #e9eef6;
+    white-space: nowrap;
+}
+.inventory-scroll tbody td {
+    height: 52px;
+    padding: 10px 12px;
+    white-space: nowrap;
+}
+.inventory-scroll:focus-visible {
+    outline: 3px solid #b7860a;
+    outline-offset: 3px;
+    border-radius: 12px;
+}
+
+
+.supplier-catalog-scroll { max-height: 330px; overflow: auto; }
+.supplier-catalog-scroll thead th { position: sticky; top: 0; background: #e9eef6; z-index: 1; }
+.supplier-catalog-scroll td input { width: 125px; }
+.supplier-catalog-scroll td input[type="checkbox"] { width: 20px; min-width: 20px; height: 20px; }
+.supplier-catalog-scroll input[readonly] { background: #f0f2f5; color: #40516a; }

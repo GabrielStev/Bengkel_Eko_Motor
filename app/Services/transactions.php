@@ -156,9 +156,10 @@ function purchase(int $actor): string
             $supplier = number('pemasok_id');
             $status = choice('status_bayar', ['Lunas','Utang']);
             $quantities = items();
-            if (!$quantities || !row('SELECT id_pemasok FROM pemasok WHERE id_pemasok=?', [$supplier])) {
-                throw new DomainException('Pilih pemasok dan isi rincian barang.');
+            if (!$quantities) {
+                throw new DomainException('Pilih pemasok dan isi jumlah barang yang dibeli.');
             }
+            supplierRecord($supplier, true);
             $total = 0;
             $lines = [];
             foreach ($quantities as $part => $qty) {
@@ -166,10 +167,15 @@ function purchase(int $actor): string
                 if (!$item || isServiceItem($item['kategori'])) {
                     throw new DomainException('Pembelian stok hanya untuk barang fisik.');
                 }
-                $price = $_POST['harga'][$part] ?? '';
-                $unit = cents(is_string($price) ? $price : '');
-                if (!$unit) {
-                    throw new DomainException('Harga beli harus lebih dari nol.');
+                $catalog = row('SELECT harga_beli FROM pemasok_sparepart WHERE id_pemasok=? AND id_sparepart=? FOR UPDATE', [$supplier,$part]);
+                if (!$catalog) {
+                    throw new DomainException('Barang yang dipilih tidak tersedia pada pemasok ini. Pilih kembali pemasok.');
+                }
+                $submittedPrices = $_POST['harga'] ?? [];
+                $price = is_array($submittedPrices) ? ($submittedPrices[$part] ?? '') : '';
+                $unit = cents($catalog['harga_beli']);
+                if (!is_string($price) || cents(trim($price)) !== $unit) {
+                    throw new DomainException('Harga pemasok berubah atau tidak sesuai katalog. Muat ulang halaman pembelian.');
                 }
                 $total += $unit * $qty;
                 decimal($total);
